@@ -1,0 +1,92 @@
+name: Library-API
+
+on:
+  push:
+    branches: [main, master] #Setting on Push to main branch, run our jobs
+
+
+jobs: #The things we want to happen on push
+
+  build:
+    runs-on: ubuntu-latest #Ubuntu is a widely used linux distribution that is heavily support and has alot of prebuilt Github actions
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12 #setting up python on our build environment adding comment
+        
+      - name: Create virtual Environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+
+      - name: Install our Dependecies
+        run: |
+          python -m pip install --upgrade pip 
+          python -m pip install -r requirements.txt
+
+      - name: Print debugging information
+        run: |
+          echo "Python Version: $(python --version)"
+          echo "Working Directory: $(pwd)"
+          echo "Content of Working Directory: $(ls-l)"
+          echo "Contents of site-package: $(ls -l venv/lib/python*/site-packages)"n
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest #Ubuntu is a widely used linux distribution that is heavily support and has alot of prebuilt Github actions
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12 #setting up python on our build environment
+        
+      - name: Create virtual Environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+
+      - name: Install our Dependecies
+        run: |
+          python -m pip install --upgrade pip 
+          python -m pip install -r requirements.txt
+
+      - name: Run test
+        run: python -m unittest discover -s tests -p 'test_*.py'
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12 #setting up python on our build environment
+        
+      - name: Create virtual Environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+
+      - name: Install our Dependecies
+        run: |
+          python -m pip install --upgrade pip 
+          python -m pip install -r requirements.txt
+
+      - name: Deploy to production
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.SERVICE_ID}}
+          api-key: ${{ secrets.RENDER_API_KEY}}

@@ -7,3 +7,4 @@ class MemberSchema(ma.SQLAlchemyAutoSchema):
 
 member_schema = MemberSchema()
 members_schema = MemberSchema(many=True)
+login_schema = MemberSchema(exclude=['name', 'DOB'])

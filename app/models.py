@@ -23,8 +23,10 @@ class Member(Base):
     name: Mapped[str] = mapped_column(db.String(100), nullable=False)
     email: Mapped[str] = mapped_column(db.String(150), unique=True, nullable=False)
     DOB: Mapped[date] = mapped_column(nullable=False)
+    password: Mapped[str] = mapped_column(db.String(100), nullable=False)
 
-    loans: Mapped[List["Loan"]] = db.relationship(back_populates="member")
+    loans: Mapped[List["Loan"]] = db.relationship(back_populates="member", cascade="all, delete") #When we delete a Memeber we remove the records of their loans
+    orders: Mapped[List["Order"]] = db.relationship(back_populates="member", cascade="all, delete")
 
 class Loan(Base):
     __tablename__ = "loans"
@@ -46,3 +48,33 @@ class Book(Base):
     title: Mapped[str] = mapped_column(db.String(100), nullable=False)
 
     loans: Mapped[List["Loan"]] = db.relationship(secondary=loan_book, back_populates="books")
+
+class Item(Base):
+    __tablename__ = "items"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    item_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
+    price: Mapped[float] = mapped_column(db.Float(), nullable=False)
+
+    order_items: Mapped[List["OrderItems"]] = db.relationship(back_populates = "item")
+
+class Order(Base):
+    __tablename__ = "orders"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    order_date: Mapped[date] = mapped_column(nullable=False)
+    member_id: Mapped[int] = mapped_column(db.ForeignKey("members.id"), nullable=False)
+
+    member: Mapped["Member"] = db.relationship(back_populates="orders")
+    order_items: Mapped[List["OrderItems"]] = db.relationship(back_populates = "order")
+
+class OrderItems(Base):
+    __tablename__ = "order_items"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    order_id: Mapped[int] = mapped_column(db.ForeignKey("orders.id"), nullable=False)
+    item_id: Mapped[int] = mapped_column(db.ForeignKey("items.id"), nullable=False)
+    quantity: Mapped[int] = mapped_column(nullable=False)
+
+    order: Mapped["Order"] = db.relationship(back_populates= "order_items")
+    item: Mapped["Item"] = db.relationship(back_populates= "order_items")

@@ -1,0 +1,196 @@
+swagger: '2.0'
+info:
+  title: "Library API"
+  description: "API to manage a Library System"
+  version: "1.0.0"
+host: "library-management-api-aw5f.onrender.com" #working on local host
+schemes:
+  - "https"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+#Define Token Auth
+securityDefinitions:
+  bearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+
+#Our Endpoints
+paths: 
+  /members/login:
+    post:
+      tags:
+        - Members
+      summary: "Endpoint to login a user, (generates token)"
+      description: "Validates member credentials, generates and return a member specific token"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Login Credentials"
+          required: true
+          schema:
+            $ref: "#/definitions/LoginPayload"
+      responses:
+        200:
+          description: "Successful Login"
+          schema: 
+            $ref: "#/definitions/LoginResponse"
+          examples:
+            application/json:
+              token: "kjsbvpiuahsenASDKLJASDKBASKDHI..."
+              message: "successfully logged in"
+              status: "success"
+
+  /members: #endpoint
+    post: #Post request
+      tags:
+        - Members
+      summary: "Endpoint to create/register a new user."
+      description: "Endpoint to create a new member in our Library system, emails must be unique."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Information required to create a new Member."
+          required: true
+          schema:
+            $ref: "#/definitions/CreateMemberPayload"
+      responses:
+        201:
+          descriptions: "Successfull Member Creation"
+          schema:
+            $ref: "#/definitions/CreateMemberResponse"
+          examples:
+            application/json:
+              id: 1
+              name: John Doe
+              DOB: "1900-01-01"
+              email: johnd@email.com
+              password: password123
+              role: admin
+  
+    put: #PUT request
+        tags:
+          - Members
+        summary: "Endpoint to Update member information."
+        description: "Endpoint to update a new member, requires a token. Leave fields you do not wish to update blank."
+        security:
+          - bearerAuth: []
+        parameters:
+          - in: "body"
+            name: "body"
+            description: "Information required to update a member."
+            required: true
+            schema:
+              $ref: "#/definitions/UpdateMemberPayload"
+        responses:
+          200:
+            descriptions: "Successfully Updated Member"
+            schema:
+              $ref: "#/definitions/UpdateMemberResponse"
+            examples:
+              application/json:
+                id: 1
+                name: John Diddly
+                DOB: "1900-01-01"
+                email: johnd@email.com
+                password: password123
+                
+          
+
+
+#Examples for Responses and Request
+definitions: 
+
+  LoginPayload:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
+      
+    required:
+      - email
+      - password
+    
+  LoginResponse:
+    type: "object"
+    properties:
+      token:
+        type: "string"
+      message:
+        type: "string"
+      status:
+        type: "string"
+      
+    
+     
+  CreateMemberPayload:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      email:
+        type: "string"
+      DOB:
+        type: "string"
+      password:
+        type: "string"
+      
+    required:
+      - name
+      - email
+      - DOB
+      - password
+      - role
+
+  CreateMemberResponse:
+    type: "object"
+    properties:
+      id:
+        type: "int"
+      name:
+        type: "string"
+      email:
+        type: "string"
+      DB:
+        type: "string"
+      password:
+        type: "string"
+      
+
+  UpdateMemberPayload:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      email:
+        type: "string"
+      DOB:
+        type: "string"
+      password:
+        type: "string"
+    required:
+      - name
+      - email
+      - DOB
+      - password
+  
+
+  UpdateMemberResponse:
+    type: "object"
+    properties:
+      id:
+        type: "int"
+      name:
+        type: "string"
+      email:
+        type: "string"
+      DOB:
+        type: "string"
+      password:
+        type: "string"
+      
