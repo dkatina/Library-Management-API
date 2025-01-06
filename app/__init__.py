@@ -3,6 +3,7 @@ from app.models import db
 from app.extensions import ma
 from app.blueprints.members import members_bp
 from app.blueprints.books import books_bp
+from app.blueprints.loans import loans_bp
 
 
 def create_app(config_name):
@@ -17,6 +18,7 @@ def create_app(config_name):
     #registering blueprints
     app.register_blueprint(members_bp, url_prefix='/members')
     app.register_blueprint(books_bp, url_prefix="/books")
+    app.register_blueprint(loans_bp, url_prefix="/loans" )
 
 
     return app
