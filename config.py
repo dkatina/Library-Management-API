@@ -1,6 +1,6 @@
 
 class DevelopmentConfig:
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:BAC146@localhost/library_db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///library.db'
     DEBUG = True
 
 
