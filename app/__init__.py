@@ -6,6 +6,7 @@ from app.blueprints.books import books_bp
 from app.blueprints.loans import loan_bp
 from app.blueprints.items import items_bp
 from app.blueprints.orders import orders_bp
+from app.blueprints.ebooks import ebooks_bp
 
 
 def create_app(config_name):
@@ -25,6 +26,7 @@ def create_app(config_name):
     app.register_blueprint(loan_bp, url_prefix="/loans")
     app.register_blueprint(items_bp, url_prefix="/items")
     app.register_blueprint(orders_bp, url_prefix="/orders")
+    app.register_blueprint(ebooks_bp, url_prefix="/ebooks")
 
     return app
 

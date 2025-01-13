@@ -16,6 +16,13 @@ loan_book = db.Table(
     db.Column("book_id", db.ForeignKey("books.id"))
 )
 
+loan_ebook = db.Table(
+    "loan_ebook",
+    Base.metadata,
+    db.Column("loan_id", db.ForeignKey("loans.id")),
+    db.Column("ebook_id", db.ForeignKey("ebooks.id"))
+)
+
 class Member(Base):
     __tablename__ = "members"
 
@@ -37,6 +44,9 @@ class Loan(Base):
 
     member: Mapped["Member"] = db.relationship(back_populates="loans")
     books: Mapped[List["Book"]] = db.relationship(secondary=loan_book, back_populates="loans")
+
+    #new relationship attribute
+    ebooks: Mapped[List["EBook"]] = db.relationship(secondary=loan_ebook, back_populates="loans")
 
 class Book(Base):
     __tablename__ = "books"
@@ -78,3 +88,15 @@ class OrderItems(Base):
 
     order: Mapped["Order"] = db.relationship(back_populates= "order_items")
     item: Mapped["Item"] = db.relationship(back_populates= "order_items")
+
+class EBook(Base):
+    __tablename__ = "ebooks"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    author: Mapped[str] = mapped_column(db.String(100), nullable=False)
+    genre: Mapped[str] = mapped_column(db.String(50), nullable=False)
+    desc: Mapped[str] = mapped_column(db.String(255), nullable=False)
+    title: Mapped[str] = mapped_column(db.String(100), nullable=False)
+
+    #relationship attribute to Loan
+    loans: Mapped[List["Loan"]] = db.relationship(secondary=loan_ebook, back_populates="ebooks")
